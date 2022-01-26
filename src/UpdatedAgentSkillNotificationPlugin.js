@@ -4,8 +4,6 @@ import { FlexPlugin } from 'flex-plugin';
 import { Actions, Notifications, NotificationType, NotificationBar, Tab, TaskHelper } from "@twilio/flex-ui";
 import { FlexNotification } from './enums';
 
-// import CustomTaskListContainer from './components/CustomTaskList/CustomTaskList.Container';
-// import reducers, { namespace } from './states';
 
 const PLUGIN_NAME = 'UpdatedAgentSkillNotificationPlugin';
 
@@ -22,7 +20,6 @@ export default class UpdatedAgentSkillNotificationPlugin extends FlexPlugin {
    * @param manager { import('@twilio/flex-ui').Manager }
    */
   async init(flex, manager) {
-    //this.registerReducers(manager);
 
     const state = manager.store.getState();
 
@@ -60,13 +57,16 @@ export default class UpdatedAgentSkillNotificationPlugin extends FlexPlugin {
 
     manager.workerClient.on("attributesUpdated", worker => {
 
+            // get the updated skill array's length and the updated skill array
             let updatedAttributesSkillLength = worker.attributes.routing.skills.length;
             let updatedSkills = worker.attributes.routing.skills;
 
             if (updatedAttributesSkillLength!=skillLength || !currentSkills.every((val, index) => val === updatedSkills[index])) {
               Notifications.showNotification(FlexNotification.skillsChanged, { skills: worker.attributes.routing.skills});
             }
+
             skillLength = updatedAttributesSkillLength;
+            currentSkills = updatedSkills;
 
         });
   }
@@ -76,13 +76,5 @@ export default class UpdatedAgentSkillNotificationPlugin extends FlexPlugin {
    *
    * @param manager { Flex.Manager }
    */
-  // registerReducers(manager) {
-  //   if (!manager.store.addReducer) {
-  //     // eslint-disable-next-line
-  //     console.error(`You need FlexUI > 1.9.0 to use built-in redux; you are currently on ${VERSION}`);
-  //     return;
-  //   }
-  //
-  //   manager.store.addReducer(namespace, reducers);
-  // }
+
 }
